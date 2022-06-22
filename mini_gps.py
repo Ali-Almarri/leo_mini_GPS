@@ -8,8 +8,10 @@
 from asyncio import events
 from curses.ascii import isdigit
 import time
+
+import click
 from PyQt5 import QtCore, QtGui, QtWidgets ,QtWidgets,QtTest
-from PyQt5.QtCore import pyqtSignal, QObject , QThread,QTimer
+from PyQt5.QtCore import pyqtSignal, QObject , QThread,QTimer,Qt
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from qwt import QwtPlot
 import usb.core
@@ -19,7 +21,7 @@ import threading
 import os
 import struct
 from plaintextedit import PlainTextEdit
-from PyQt5.QtCore import pyqtSignal, QObject
+
 
 class Ui_MainWindow(QMainWindow):        
     def __init__(self):
@@ -151,7 +153,7 @@ class Ui_MainWindow(QMainWindow):
         font.setPointSize(11)
         self.btn_set_freq.setFont(font)
         self.btn_set_freq.setObjectName("btn_set_freq")
-        self.btn_factory_defaults = QtWidgets.QPushButton(self.groupBox_2)
+        self.btn_factory_defaults = QtWidgets.QPushButton(self.groupBox_2, clicked= lambda: self.btn_factory_defaults_clicked())
         self.btn_factory_defaults.setGeometry(QtCore.QRect(30, 120, 141, 25))
         font = QtGui.QFont()
         font.setFamily("Liberation Sans")
@@ -568,6 +570,33 @@ class Ui_MainWindow(QMainWindow):
 
         """need improvement
         """
+    def btn_factory_defaults_clicked(self):
+        try:
+            loc_out_freq =str(10000000)
+
+            setFreqDict = self.convert_csv_toDict()
+            dict_index = setFreqDict["output_freq"].index(loc_out_freq)
+
+            
+            loc_GPSFrequency =setFreqDict["GPS_reference"][dict_index]
+            loc_n31          =setFreqDict["N31"][dict_index] 
+            loc_N2_HS        =setFreqDict["N2_HS"][dict_index] 
+            loc_N2_LS        =setFreqDict["N2_LS"][dict_index] 
+            loc_N1_HS        =setFreqDict["N1_HS"][dict_index] 
+            loc_NC1_LS       =setFreqDict["NC1_LS"][dict_index]
+            loc_BW           =setFreqDict["BW"][dict_index]
+            self.textEdit_gps_reference.setText(str(loc_GPSFrequency))
+            self.textEdit_n31.setText(str(loc_n31))
+            self.textEdit_n2_hs.setText(str(loc_N2_HS))
+            self.textEdit_n2_ls.setText(str(loc_N2_LS))
+            self.textEdit_n1_hs.setText(str(loc_N1_HS))
+            self.textEdit_nc1_ls.setText(str(loc_NC1_LS))
+            self.textEdit_bw.setText(str(loc_BW))
+            self.textEdit_output_freq.setText(loc_out_freq)
+            self.textEdit_output_freq.setAlignment(QtCore.Qt.AlignHCenter)
+            self.setting_to_buffer()
+        except ValueError:
+            print(loc_out_freq ,"not in list")
     def btn_set_freq_clicked(self):
 
         #                 # loc_VCO = ((loc_GPSFrequency) / (loc_n31)) * (loc_N2_HS) * (loc_N2_LS);
@@ -689,44 +718,45 @@ class Ui_MainWindow(QMainWindow):
     
     """
     
-    """ need improvement
+    """ 
     """    
     def read_interrupt(self):
         try:    
-            res = self.dev.read(0x81,64,100).tolist()
-            if res [1] == 2 or res[1] == 6: 
+            buf = self.dev.read(0x81,64,100).tolist()
+            print(buf[0])
+            
+            sat_lock   = not bool(buf[1] & 0x01)
+            pll_lock   = not bool(buf[1] & 0x02)
+            print(f"sat {sat_lock}\n pll {pll_lock}")
+            if pll_lock == False and sat_lock == True: 
                 # no pll
                 # gps ok
                 self.label_pll_signal.setStyleSheet("background-color: rgb(207, 2, 2);\n"
                 "border: 1px solid black;")
                 self.label_gps_signal.setStyleSheet("background-color: rgb(115, 210, 22);\n"
                 "border: 1px solid black;")
-            elif res [1] == 41 or res [1] == 69 or res[1] ==45:
+            elif pll_lock == True and sat_lock == False: 
                 # no gps
                 # pll ok
                 self.label_pll_signal.setStyleSheet("background-color: rgb(115, 210, 22);\n"
                 "border: 1px solid black;")
                 self.label_gps_signal.setStyleSheet("background-color: rgb(207, 2, 2);\n"
                 "border: 1px solid black;")            
-            elif res [1] == 43:
+            elif pll_lock == False and sat_lock == False: 
                 # no gps
                 # no pll 
                 self.label_gps_signal.setStyleSheet("background-color: rgb(207, 2, 2);\n"
                 "border: 1px solid black;")
                 self.label_gps_signal.setStyleSheet("background-color: rgb(207, 2, 2);\n"
                 "border: 1px solid black;")
-            elif res [1] == 4 or res [1] == 132 :
+            elif pll_lock == True and sat_lock == True: 
                 # gps ok
                 #  pll ok
                 self.label_pll_signal.setStyleSheet("background-color: rgb(115, 210, 22);\n"
                 "border: 1px solid black;")
                 self.label_gps_signal.setStyleSheet("background-color: rgb(115, 210, 22);\n"
                 "border: 1px solid black;")
-            else:
-                self.label_pll_signal.setStyleSheet("background-color: rgb(207, 2, 2);\n"
-                "border: 1px solid black;")
-                self.label_gps_signal.setStyleSheet("background-color: rgb(207, 2, 2);\n"
-                "border: 1px solid black;")                                
+                             
         except:
             pass
 
@@ -890,8 +920,9 @@ class Ui_MainWindow(QMainWindow):
             
             self.textEdit_bw.setText(str(loc_BW))        
             
-            
-            self.textEdit_output_freq.setText(str(int(loc_Frequency1)))    
+            string = str(int(loc_Frequency1))
+            self.textEdit_output_freq.setText(string)
+            self.textEdit_output_freq.setAlignment(QtCore.Qt.AlignHCenter)
         except:
           pass
 
@@ -913,6 +944,7 @@ class Ui_MainWindow(QMainWindow):
         self.dev = self.init_usb_hid()  
         self.fill_data()
         self.get_setting()
+        
          
     """
     *** loop()
@@ -927,6 +959,7 @@ class Ui_MainWindow(QMainWindow):
         # if self.stop_threads == True:
         #    return
         if dev2 is not None :
+           
             if self.is_dev2_init == False:
                 self.divece_info()
                 print("dev found")
@@ -940,7 +973,7 @@ class Ui_MainWindow(QMainWindow):
              self.is_dev2_init=False  
              self.dev = None
             
-            
+        self.read_interrupt()     
         if self.isHidden() is True :
             sys.exit()
         self.timer.stop()
