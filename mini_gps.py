@@ -819,23 +819,28 @@ class Ui_MainWindow(QMainWindow):
         dev2 = usb.core.find(idVendor=0x1dd2, idProduct=0x2211)
         self.dev = dev2
         try:
+            # Dev iManufacturer  
             if self.dev._manufacturer is None:
                 self.dev._manufacturer = usb.util.get_string(
                 self.dev, self.dev.iManufacturer)
                 self.label_made_by.setText(self.dev._manufacturer)
-                
+            # Dev iProduct               
             if self.dev._product is None:
                 self.dev._product = usb.util.get_string(self.dev, self.dev.iProduct)
                 self.label_device_name.setText(self.dev._product)
-
+            # Dev iSerialNumber
             if self.dev._serial_number is None:
                 self.dev._serial_number = usb.util.get_string(
                     self.dev, self.dev.iSerialNumber)
                 self.comboBox_seria_number.setItemText(
                     0, self.dev._serial_number)
 
-                cmd = 'lsusb -v -d 1dd2:2211 | grep bcdDevice'
-                firmware_version = os.popen(cmd).read().splitlines()[0].split()[1];
+    
+            # Dev firmware_version
+                firmware_hex = hex(self.dev.bcdDevice)[2:]   
+                major = str(firmware_hex[0])
+                minor = str(firmware_hex[1:])
+                firmware_version =str(major +"."+minor)
                 self.label_firmware.setText(firmware_version)
         except:
             pass  
