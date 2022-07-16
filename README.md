@@ -23,8 +23,10 @@ Goals to reverse engineer Orginal App that comes with Leo Mini Precision GPS Ref
 
 - [ ] implementation for Factory defaults Button
 
-- [ ] testing in ALL OSs
-
+- [ ] testing in ALL OSs 
+    - [x] Linux
+    - [ ] Windows
+    - [ ] macos
 - [ ] fix known issues
 
   
@@ -35,6 +37,7 @@ Goals to reverse engineer Orginal App that comes with Leo Mini Precision GPS Ref
 
 > many known issues
 > Set frequency not ideal solution (need formulas to calculate eg. N2_LS , NC1_LS and GPS_REFRENCE )
+> usb.core.USBError: [Errno 13] Access denied (insufficient permissions) (FIX add udev rule and Disconnect and re-connect the USB device)
 
 ## python packages
 
@@ -57,3 +60,5 @@ pip install -r requirements.txt
 > add udev rule to /etc/udev/rules.d/50-myusb.rules 
 
     sudo echo 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="1dd2", ATTRS{idProduct}=="2211", GROUP="users", MODE="0666"' >> /etc/udev/rules.d/50-myusb.rules
+
+    sudo udevadm control --reload-rules && sudo udevadm trigger
