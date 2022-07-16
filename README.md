@@ -93,11 +93,9 @@ pip install -r requirements.txt
 
 **add udev rule to /etc/udev/rules.d/50-myusb.rules**
 
-  
+    $  sudo echo 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="1dd2",  ATTRS{idProduct}=="2211", GROUP="users", MODE="0666"' >> /etc/udev/rules.d/50-myusb.rules
 
-$  sudo echo 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="1dd2",  ATTRS{idProduct}=="2211", GROUP="users", MODE="0666"' >> /etc/udev/rules.d/50-myusb.rules
-
-$  sudo udevadm control --reload-rules && sudo udevadm trigger
+    $  sudo udevadm control --reload-rules && sudo udevadm trigger
 
 
 
