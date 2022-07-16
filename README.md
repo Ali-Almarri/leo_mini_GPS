@@ -43,11 +43,11 @@ Goals to reverse engineer Orginal App that comes with Leo Mini Precision GPS Ref
 
 - [ ] testing in ALL OSs
 
-- [x] Linux
+	- [x] Linux
 
-- [ ] Windows
+	- [ ] Windows
 
-- [ ] macos
+	- [ ] macos
 
 - [ ] fix known issues
 
@@ -58,9 +58,9 @@ Goals to reverse engineer Orginal App that comes with Leo Mini Precision GPS Ref
 ## known issues
 
      
-  2.  > Set frequency not ideal solution (need formulas to calculate eg. N2_LS , NC1_LS and GPS_REFRENCE )
+  1.  > Set frequency not ideal solution (need formulas to calculate eg. N2_LS , NC1_LS and GPS_REFRENCE )
     
-3.   > usb.core.USBError: [Errno 13] Access denied (insufficient permissions) (FIX add udev rule and Disconnect and re-connect the
+2.   > usb.core.USBError: [Errno 13] Access denied (insufficient permissions) (FIX add udev rule and Disconnect and re-connect the
     USB device)
 
   
@@ -91,15 +91,13 @@ pip install -r requirements.txt
 
   
 
-> add udev rule to /etc/udev/rules.d/50-myusb.rules
+**add udev rule to /etc/udev/rules.d/50-myusb.rules**
 
   
 
-sudo echo 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="1dd2", ATTRS{idProduct}=="2211", GROUP="users", MODE="0666"' >> /etc/udev/rules.d/50-myusb.rules
+> sudo echo 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="1dd2",  ATTRS{idProduct}=="2211", GROUP="users", MODE="0666"' >> /etc/udev/rules.d/50-myusb.rules
 
-  
-
-sudo udevadm control --reload-rules && sudo udevadm trigger
+> sudo udevadm control --reload-rules && sudo udevadm trigger
 
 
 
