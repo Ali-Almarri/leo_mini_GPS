@@ -60,18 +60,17 @@ Goals to reverse engineer Orginal App that comes with Leo Mini Precision GPS Ref
      
   1.  > Set frequency not ideal solution (need formulas to calculate eg. N2_LS , NC1_LS and GPS_REFRENCE )
     
-2.   > usb.core.USBError: [Errno 13] Access denied (insufficient permissions) (FIX add udev rule and Disconnect and re-connect the
+  2.   > usb.core.USBError: [Errno 13] Access denied (insufficient permissions) (FIX add udev rule and Disconnect and re-connect the
     USB device)
 
+  
   
 
 ## python packages
 
-  
+    $  sudo apt-get install python3-pyqt5.qtsvg
 
-  
-
-pip install -r requirements.txt
+    $  pip install -r requirements.txt
 
   
 
@@ -80,7 +79,7 @@ pip install -r requirements.txt
   
 
 - pyusb
-
+- PythonQwt
   
 
   
