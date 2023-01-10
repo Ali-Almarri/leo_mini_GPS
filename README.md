@@ -47,7 +47,7 @@ Goals to reverse engineer Orginal App that comes with Leo Mini Precision GPS Ref
 
 	- [ ] Windows
 
-	- [ ] macos
+	- [ ] mac_os
 
 - [ ] fix known issues
 
